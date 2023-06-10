@@ -1,0 +1,43 @@
+version: '3.8'
+
+x-service-defaults: &service-defaults
+  restart: 'no'
+  logging:
+    options:
+      max-size: '5m'
+      max-file: '10'
+
+services:
+
+  mongo:
+    <<: *service-defaults
+    image: 'mongo:4.4.18'
+    container_name: 'ws-mongo'
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: 'mongo_admin'
+      MONGO_INITDB_ROOT_PASSWORD: '987876'
+    volumes:
+      # MongoDB data persistence.
+      - './data/:/data/db/'
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      start_period: '5s'
+      interval: '5s'
+      timeout: '5s'
+      retries: 5
+
+  mongo-gui:
+    <<: *service-defaults
+    image: 'mongo-express:0.54.0'
+    container_name: 'ws-mongo-gui'
+    depends_on:
+      mongo:
+        condition: 'service_healthy'
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: 'mongo_admin'
+      ME_CONFIG_MONGODB_ADMINPASSWORD: '987876'
+      ME_CONFIG_MONGODB_URL: 'mongodb://mongo_admin:987876@mongo:27017/'
