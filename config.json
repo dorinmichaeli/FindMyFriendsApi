@@ -5,5 +5,13 @@
 		"username": "mongo_admin",
 		"password": "987876",
 		"database": "wstest"
+	},
+	"firebase": {
+		"apiKey": "AIzaSyBBJR9e7SvJBB6Ugb0W-IQWPmMWsobpZZc",
+		"authDomain": "android-test-project-3e279.firebaseapp.com",
+		"projectId": "android-test-project-3e279",
+		"storageBucket": "android-test-project-3e279.appspot.com",
+		"messagingSenderId": "73081067599",
+		"appId": "1:73081067599:web:85c89d5fa6229a1b1af23a"
 	}
 }

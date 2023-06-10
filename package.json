@@ -5,6 +5,7 @@
 		"start": "node index.js"
 	},
 	"dependencies": {
+		"firebase-admin": "^11.9.0",
 		"mongoose": "^7.2.3",
 		"nanoid": "^4.0.2",
 		"ws": "^8.13.0"
