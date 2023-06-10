@@ -1,0 +1,18 @@
+Client requests:
+- Join group (provide group id)
+- Create group (get group id in response)
+
+Client messages:
++ Send chat message
+- Place/remove marker
+
+
+Server updates:
++ Message update (new message in chat)
+- Marker update (marker placed/removed)
++ User update (user added/removed)
+
+Server new connection init:
++ Chat history
+- Marker history
++ List connected users
