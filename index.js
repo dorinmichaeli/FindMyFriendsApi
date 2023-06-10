@@ -36,13 +36,13 @@ async function main() {
     // Generate a unique ID for this client.
     socket.id = nanoid();
     // Send the chat history to the client.
-    sendHistory(socket);
+    sendHistoryToUser(socket);
     // Let the clients know that a new client has joined.
-    broadcastUserJoined(socket);
+    handleUserJoined(socket);
 
     socket.on('message', messageBuffer => {
       // Let the clients know that a new message has been received.
-      broadcastChatMessage(socket, messageBuffer);
+      handleChatMessage(socket, messageBuffer);
     });
 
     socket.on('error', err => {
@@ -51,11 +51,11 @@ async function main() {
 
     socket.on('close', () => {
       // Let the clients know that a client has left.
-      broadcastUserLeft(socket);
+      handleUserLeft(socket);
     });
   });
 
-  function broadcastUserJoined(socket) {
+  function handleUserJoined(socket) {
     // Record the message's timestamp.
     const currentTime = new Date().toISOString();
     // Create a user joined message object.
@@ -70,7 +70,7 @@ async function main() {
     broadcastMessage(server, messageData);
   }
 
-  function broadcastChatMessage(socket, messageBuffer) {
+  function handleChatMessage(socket, messageBuffer) {
     // Record the message's timestamp.
     const currentTime = new Date().toISOString();
     // Convert the message to a string.
@@ -82,8 +82,9 @@ async function main() {
       text: messageText,
     };
     // Store the new message in the database.
-    /* TODO: await? */
-    addChatMessage(chatMessageModel, message)
+    addChatMessage(chatMessageModel, message).catch(err => {
+      console.error('Error while adding chat message to database:', err);
+    });
 
     // Serialize the message.
     const messageData = serializeMessage(MESSAGE_TYPE.CHAT_MESSAGE, message);
@@ -91,7 +92,7 @@ async function main() {
     broadcastMessage(server, messageData);
   }
 
-  function broadcastUserLeft(socket) {
+  function handleUserLeft(socket) {
     // Record the message's timestamp.
     const currentTime = new Date().toISOString();
     // Create a user left message object.
@@ -106,7 +107,7 @@ async function main() {
     broadcastMessage(server, messageData);
   }
 
-  async function sendHistory(socket) {
+  async function sendHistoryToUser(socket) {
     // Load the chat history from the database.
     const messageHistory = await getChatMessageHistory(chatMessageModel);
     // Serialize it.
