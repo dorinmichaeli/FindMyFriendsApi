@@ -109,7 +109,7 @@ async function main() {
     socket.authenticated = true;
     socket.userInfo = userInfo;
     // Notify the client that authentication was successful.
-    const messageData = serializeMessage(SERVER_MESSAGE_TYPE.AUTHENTICATED, '');
+    const messageData = serializeMessage(SERVER_MESSAGE_TYPE.AUTHENTICATED, null);
     socket.send(messageData);
 
     // Let the clients know that a new client has joined.
@@ -197,5 +197,9 @@ function broadcastMessageToAuthenticatedClients(server, messageText) {
 }
 
 function serializeMessage(messageType, messageObject) {
-  return messageType + JSON.stringify(messageObject);
+  let serialized = messageType;
+  if (messageObject) {
+    serialized += JSON.stringify(messageObject);
+  }
+  return serialized;
 }
