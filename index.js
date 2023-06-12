@@ -137,7 +137,7 @@ async function main() {
 
     // Create a message object.
     const message = {
-      userEmail: userInfo.email,
+      userName: userInfo.email,
       timestamp: currentTime,
       text: chatText,
     };
