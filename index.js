@@ -3,7 +3,9 @@ import {connectToMongo} from './lib/tools/connect-mongo.js';
 import {loadAppConfig} from './lib/tools/config-loader.js';
 import {createChatMessageModel} from './lib/models/chatMessage.model.js';
 import {addChatMessage, getChatMessageHistory} from './lib/controller/chatMessage.controller.js';
-import {createUserAuthService} from './lib/services/userAuth.service.js';
+import {createDummyUserAuthService, createUserAuthService} from './lib/services/userAuth.service.js';
+
+const TEST_MODE = true;
 
 const SERVER_MESSAGE_TYPE = {
   USER_JOINED: 'A',
@@ -31,7 +33,12 @@ async function main() {
   // Create the chat message model.
   const chatMessageModel = createChatMessageModel(client);
   // Create the user auth service.
-  const userAuthService = createUserAuthService(config);
+  let userAuthService;
+  if (TEST_MODE) {
+    userAuthService = createDummyUserAuthService(config);
+  } else {
+    userAuthService = createUserAuthService(config);
+  }
 
   const server = new WebSocketServer({
     port: 8080,
