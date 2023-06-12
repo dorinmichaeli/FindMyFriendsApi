@@ -137,7 +137,6 @@ async function main() {
 
     // Create a message object.
     const message = {
-      userId: socket.userInfo.uid,
       userEmail: userInfo.email,
       timestamp: currentTime,
       text: chatText,
@@ -159,7 +158,7 @@ async function main() {
     // Create a user left message object.
     const userLeftMessage = {
       timestamp: currentTime,
-      userId: socket.userInfo.uid,
+      userName: socket.userInfo.email,
     };
 
     // Serialize the message.
