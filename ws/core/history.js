@@ -1,4 +1,4 @@
-import { getChatMessageHistory } from '../controller/chatMessage.controller.js';
+import { getChatMessageHistory } from '../../lib/controller/chatMessage.controller.js';
 import { serializeMessage } from './serialize.js';
 import { SERVER_MESSAGE_TYPE } from './message-types.js';
 

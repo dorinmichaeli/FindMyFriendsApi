@@ -2,8 +2,8 @@ import { connectToMongo } from './lib/tools/connect-mongo.js';
 import { loadAppConfig } from './lib/tools/config-loader.js';
 import { createChatMessageModel } from './lib/models/chatMessage.model.js';
 import { createDummyUserAuthService, createUserAuthService } from './lib/services/userAuth.service.js';
-import { initWsApi } from './lib/api-ws.js';
-import { initRestApi } from './lib/api-rest.js';
+import { initWsApi } from './ws/api-ws.js';
+import { initRestApi } from './rest/api-rest.js';
 import { createGroupModel } from './lib/models/group.model.js';
 
 const WS_PORT = 8080;

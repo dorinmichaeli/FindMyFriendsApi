@@ -1,5 +1,5 @@
-import { createGroup } from '../controller/group.controller.js';
-import { asyncHandler } from '../tools/async-handler.js';
+import { createGroup } from '../../lib/controller/group.controller.js';
+import { asyncHandler } from '../../lib/tools/async-handler.js';
 
 const GROUP_NAME_REGEX = /^[a-zA-Z0-9 !'"]{4,32}$/;
 

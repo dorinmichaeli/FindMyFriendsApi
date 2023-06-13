@@ -3,8 +3,8 @@ import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.j
 import { serializeMessage } from './core/serialize.js';
 import { broadcastMessageToGroup } from './core/broadcast.js';
 import { sendHistoryToUser } from './core/history.js';
-import { addChatMessage } from './controller/chatMessage.controller.js';
-import { findGroupById } from './controller/group.controller.js';
+import { addChatMessage } from '../lib/controller/chatMessage.controller.js';
+import { findGroupById } from '../lib/controller/group.controller.js';
 import { authenticateMessage } from './core/auth.js';
 
 export function initWsApi(port, { chatMessageModel, groupModel, userAuthService }) {
