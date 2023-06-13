@@ -31,6 +31,6 @@ async function main() {
   }
 
   initWsApi(WS_PORT, { chatMessageModel, groupModel, userAuthService });
-  initRestApi(REST_PORT, { groupModel });
+  initRestApi(REST_PORT, { groupModel, userAuthService });
 }
 
