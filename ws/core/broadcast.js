@@ -6,10 +6,6 @@ export function broadcastMessageToGroup(server, groupId, messageText) {
       // Skip clients that aren't connected.
       continue;
     }
-    if (!client.authenticated) {
-      // Skip clients that aren't authenticated.
-      continue;
-    }
     if (client.groupId !== groupId) {
       // Skip clients that aren't in the same group.
       continue;

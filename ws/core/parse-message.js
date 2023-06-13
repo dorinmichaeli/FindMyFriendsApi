@@ -1,4 +1,8 @@
-export async function authenticateMessage(messageJson, {userAuthService}) {
+export function parseMessage(messageBuffer) {
+  const messageString = messageBuffer.toString('utf-8');
+  const messageType = messageString[0];
+  const messageJson = messageString.slice(1);
+
   // Every message from the client is expected to be a JSON object with the same
   // structure: { authToken: string, data: any }.
   let message;
@@ -8,13 +12,8 @@ export async function authenticateMessage(messageJson, {userAuthService}) {
     // Make the error friendlier to the client.
     throw new Error('Failed to parse message as JSON: ' + err.message);
   }
-  const { authToken, data } = message;
-
-  // Authenticate the user.
-  const userInfo = await userAuthService.verifyIdToken(authToken);
-  if (!userInfo) {
-    throw new Error('Invalid auth token: ' + authToken);
-  }
-
-  return { userInfo, data };
+  return {
+    messageType: messageType,
+    data: message,
+  };
 }
