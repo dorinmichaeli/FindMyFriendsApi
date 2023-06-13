@@ -1,25 +1,17 @@
-import {WebSocketServer, WebSocket} from 'ws';
-import {connectToMongo} from './lib/tools/connect-mongo.js';
-import {loadAppConfig} from './lib/tools/config-loader.js';
-import {createChatMessageModel} from './lib/models/chatMessage.model.js';
-import {addChatMessage, getChatMessageHistory} from './lib/controller/chatMessage.controller.js';
-import {createDummyUserAuthService, createUserAuthService} from './lib/services/userAuth.service.js';
+import { WebSocketServer } from 'ws';
+import { connectToMongo } from './lib/tools/connect-mongo.js';
+import { loadAppConfig } from './lib/tools/config-loader.js';
+import { createChatMessageModel } from './lib/models/chatMessage.model.js';
+import { addChatMessage } from './lib/controller/chatMessage.controller.js';
+import { createDummyUserAuthService, createUserAuthService } from './lib/services/userAuth.service.js';
+import { broadcastMessageToAuthenticatedClients } from './lib/core/broadcast.js';
+import { serializeMessage } from './lib/core/serialize.js';
+import { sendHistoryToUser } from './lib/core/history.js';
+import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './lib/core/message-types.js';
+import http from 'http';
 
 const TEST_MODE = true;
 
-const SERVER_MESSAGE_TYPE = {
-  USER_JOINED: 'A',
-  CHAT_MESSAGE: 'B',
-  USER_LEFT: 'C',
-  CHAT_HISTORY: 'D',
-  ERROR: 'E',
-  AUTHENTICATED: 'F',
-};
-
-const CLIENT_MESSAGE_TYPE = {
-  AUTHENTICATION_REQUEST: 'z',
-  CHAT_MESSAGE: 'y',
-};
 
 main().catch(err => {
   console.error('Uncaught error in main():', err);
@@ -35,20 +27,20 @@ async function main() {
   // Create the user auth service.
   let userAuthService;
   if (TEST_MODE) {
-    userAuthService = createDummyUserAuthService(config);
+    userAuthService = createDummyUserAuthService();
   } else {
     userAuthService = createUserAuthService(config);
   }
 
-  const server = new WebSocketServer({
+  const wss = new WebSocketServer({
     port: 8080,
   });
 
-  server.on('listening', () => {
+  wss.on('listening', () => {
     console.log('WebSocket server listening for incoming connections on port 8080.');
   });
 
-  server.on('connection', socket => {
+  wss.on('connection', socket => {
     // Clients start out as unauthenticated.
     socket.authenticated = false;
 
@@ -99,10 +91,10 @@ async function main() {
     // Serialize the message.
     const messageData = serializeMessage(SERVER_MESSAGE_TYPE.USER_JOINED, userJoinedMessage);
     // Send the message to all connected clients.
-    broadcastMessageToAuthenticatedClients(server, messageData);
+    broadcastMessageToAuthenticatedClients(wss, messageData);
 
     // Send the chat history to the client.
-    sendHistoryToUser(socket);
+    sendHistoryToUser({ chatMessageModel, socket });
   }
 
   async function handleAuthenticationRequest(socket, messageText) {
@@ -123,30 +115,35 @@ async function main() {
     handleUserAuthenticated(socket);
   }
 
-  async function handleChatMessage(socket, messageText) {
-    // Record the message's timestamp.
-    const currentTime = new Date().toISOString();
-
+  async function authenticateMessage(socket, messageText) {
     // Split the message into an auth token and message text.
     const parts = messageText.split('::');
     if (parts.length !== 2) {
       sendError(socket, 'Invalid chat message format: ' + messageText);
-      return;
+      return null;
     }
-    const [authToken, chatText] = parts;
+    const [authToken, data] = parts;
 
     // Authenticate the user.
     const userInfo = await userAuthService.verifyIdToken(authToken);
     if (!userInfo) {
       sendError(socket, 'Invalid auth token: ' + authToken);
-      return;
+      return null;
     }
 
+    return { userInfo, data };
+  }
+
+  async function handleChatMessage(socket, messageText) {
+    // Record the message's timestamp.
+    const currentTime = new Date().toISOString();
+    // Authenticate the user.
+    const { userInfo, data } = await authenticateMessage(socket, messageText);
     // Create a message object.
     const message = {
       userName: userInfo.email,
       timestamp: currentTime,
-      text: chatText,
+      text: data,
     };
     // Store the new message in the database.
     addChatMessage(chatMessageModel, message).catch(err => {
@@ -154,9 +151,9 @@ async function main() {
     });
 
     // Serialize the message.
-    const messageData = serializeMessage(SERVER_MESSAGE_TYPE.CHAT_MESSAGE, message);
+    const outgoingMessage = serializeMessage(SERVER_MESSAGE_TYPE.CHAT_MESSAGE, message);
     // Send the chat message to all connected clients.
-    broadcastMessageToAuthenticatedClients(server, messageData);
+    broadcastMessageToAuthenticatedClients(wss, outgoingMessage);
   }
 
   function handleUserLeft(socket) {
@@ -171,16 +168,7 @@ async function main() {
     // Serialize the message.
     const messageData = serializeMessage(SERVER_MESSAGE_TYPE.USER_LEFT, userLeftMessage);
     // Send the message to all connected clients.
-    broadcastMessageToAuthenticatedClients(server, messageData);
-  }
-
-  async function sendHistoryToUser(socket) {
-    // Load the chat history from the database.
-    const messageHistory = await getChatMessageHistory(chatMessageModel);
-    // Serialize it.
-    const messageData = serializeMessage(SERVER_MESSAGE_TYPE.CHAT_HISTORY, messageHistory);
-    // Send it to the client.
-    socket.send(messageData);
+    broadcastMessageToAuthenticatedClients(wss, messageData);
   }
 
   function sendError(socket, errorMessage) {
@@ -189,24 +177,3 @@ async function main() {
   }
 }
 
-function broadcastMessageToAuthenticatedClients(server, messageText) {
-  for (const client of server.clients) {
-    if (client.readyState !== WebSocket.OPEN) {
-      // Skip clients that aren't connected.
-      return;
-    }
-    if (!client.authenticated) {
-      // Skip clients that aren't authenticated.
-      return;
-    }
-    client.send(messageText);
-  }
-}
-
-function serializeMessage(messageType, messageObject) {
-  let serialized = messageType;
-  if (messageObject) {
-    serialized += JSON.stringify(messageObject);
-  }
-  return serialized;
-}
