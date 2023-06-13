@@ -1,14 +1,14 @@
-import url from 'url';
-import querystring from 'querystring';
+import url from 'node:url';
+import querystring from 'node:querystring';
 import { WebSocketServer } from 'ws';
-import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.js';
+import { parseMessage } from './core/parse-message.js';
+import { findGroupById } from '../lib/controller/group.controller.js';
+import { handleUserLeft } from './events/userLeft.event.js';
 import { serializeMessage } from './core/serialize.js';
 import { handleChatMessage } from './events/chatMessage.event.js';
-import { handleUserLeft } from './events/userLeft.event.js';
 import { handleClientWelcome } from './events/joinGroupRequest.event.js';
-import { findGroupById } from '../lib/controller/group.controller.js';
 import { handleNewUserJoined } from './events/newUserJoined.event.js';
-import { parseMessage } from './core/parse-message.js';
+import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.js';
 
 export function initWsApi(port, { chatMessageModel, groupModel, userAuthService }) {
   const wss = new WebSocketServer({
@@ -23,6 +23,19 @@ export function initWsApi(port, { chatMessageModel, groupModel, userAuthService 
     // Parse the required query parameters from the URL.
     const requestQuery = url.parse(incomingRequest.url).query;
     const { authToken, groupId } = querystring.parse(requestQuery);
+
+    if (!authToken) {
+      // No auth token, close the connection immediately.
+      sendError(socket, 'Missing auth token.');
+      socket.close();
+      return;
+    }
+    if (!groupId) {
+      // No group id, close the connection immediately.
+      sendError(socket, 'Missing group id.');
+      socket.close();
+      return;
+    }
 
     // Authenticate the user.
     const userInfo = await userAuthService.verifyIdToken(authToken);
