@@ -7,7 +7,7 @@ import { initRestApi } from './rest/api-rest.js';
 import { createGroupModel } from './lib/models/group.model.js';
 
 const WS_PORT = 8080;
-const REST_PORT = 3000;
+const REST_PORT = 4000;
 const TEST_MODE = true;
 
 main().catch(err => {
