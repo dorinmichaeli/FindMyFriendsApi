@@ -1,7 +1,7 @@
 import { connectToMongo } from './lib/tools/connect-mongo.js';
 import { loadAppConfig } from './lib/tools/config-loader.js';
 import { createChatMessageModel } from './lib/models/chatMessage.model.js';
-import { createDummyUserAuthService, createUserAuthService } from './lib/services/userAuth.service.js';
+import { createUserAuthService } from './lib/services/userAuth.service.js';
 import { initWsApi } from './ws/api-ws.js';
 import { initRestApi } from './rest/api-rest.js';
 import { createGroupModel } from './lib/models/group.model.js';
@@ -9,7 +9,7 @@ import { createMarkerModel } from './lib/models/marker.model.js';
 
 const WS_PORT = 8080;
 const REST_PORT = 4000;
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 main().catch(err => {
   console.error('Uncaught error in main():', err);
@@ -25,12 +25,7 @@ async function main() {
   const groupModel = createGroupModel(client);
   const markerModel = createMarkerModel(client);
   // Create the user auth service.
-  let userAuthService;
-  if (TEST_MODE) {
-    userAuthService = createDummyUserAuthService();
-  } else {
-    userAuthService = createUserAuthService(config);
-  }
+  const userAuthService = createUserAuthService(config, TEST_MODE);
 
   initWsApi(WS_PORT, { userAuthService, groupModel, chatMessageModel, markerModel });
   initRestApi(REST_PORT, { groupModel, userAuthService });
