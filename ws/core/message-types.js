@@ -4,8 +4,10 @@ export const SERVER_MESSAGE_TYPE = {
   CHAT_MESSAGE: 'C',
   USER_JOINED: 'D',
   USER_LEFT: 'E',
+  MARKER_CREATED: 'F',
 };
 
 export const CLIENT_MESSAGE_TYPE = {
-  CHAT_MESSAGE: 'z',
+  ADD_CHAT_MESSAGE: 'z',
+  ADD_MARKER: 'y',
 };

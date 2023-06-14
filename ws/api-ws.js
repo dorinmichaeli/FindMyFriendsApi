@@ -1,12 +1,13 @@
 import { WebSocketServer } from 'ws';
 import { parseMessage } from './core/parse-message.js';
 import { handleUserLeft } from './events/userLeft.event.js';
+import { handleAddMarker } from './events/addMarker.event.js';
 import { serializeMessage } from './core/serialize.js';
-import { handleChatMessage } from './events/chatMessage.event.js';
-import { handleClientWelcome } from './events/joinGroupRequest.event.js';
-import { handleNewUserJoined } from './events/newUserJoined.event.js';
-import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.js';
+import { handleUserJoined } from './events/userJoined.event.js';
+import { handleClientWelcome } from './events/clientWelcome.event.js';
+import { handleAddChatMessage } from './events/addChatMessage.event.js';
 import { validateInitialConnection } from './core/validate-connection.js';
+import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.js';
 
 export function initWsApi(port, { userAuthService, groupModel, chatMessageModel, markerModel }) {
   const wss = new WebSocketServer({
@@ -54,9 +55,9 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
     socket.groupInfo = groupInfo;
 
     // Send a welcome message to the client with some info.
-    await handleClientWelcome(socket, { chatMessageModel });
+    await handleClientWelcome(socket, { chatMessageModel, markerModel });
     // Let all the clients know that a new client has joined.
-    await handleNewUserJoined(socket, { wss });
+    await handleUserJoined(socket, { wss });
   }
 
   async function handleClientMessage(socket, messageBuffer) {
@@ -71,9 +72,11 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
 
     // 3. Handle the message.
     switch (messageType) {
-      case CLIENT_MESSAGE_TYPE.CHAT_MESSAGE:
-        // Let the clients know that a new message has been received.
-        await handleChatMessage(req, { chatMessageModel, wss });
+      case CLIENT_MESSAGE_TYPE.ADD_CHAT_MESSAGE:
+        await handleAddChatMessage(req, { wss, chatMessageModel });
+        break;
+      case CLIENT_MESSAGE_TYPE.ADD_MARKER:
+        await handleAddMarker(req, { wss, markerModel });
         break;
       default:
         throw new Error('Unknown message type: ' + messageType);

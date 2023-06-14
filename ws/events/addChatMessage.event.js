@@ -3,7 +3,7 @@ import { serializeMessage } from '../core/serialize.js';
 import { SERVER_MESSAGE_TYPE } from '../core/message-types.js';
 import { broadcastMessageToGroup } from '../core/broadcast.js';
 
-export async function handleChatMessage(req, { chatMessageModel, wss }) {
+export async function handleAddChatMessage(req, { wss, chatMessageModel }) {
   // Record the message's timestamp.
   const currentTime = new Date().toISOString();
   // Create a message object.
@@ -20,6 +20,6 @@ export async function handleChatMessage(req, { chatMessageModel, wss }) {
 
   // Serialize the message.
   const outgoingMessage = serializeMessage(SERVER_MESSAGE_TYPE.CHAT_MESSAGE, message);
-  // Send the chat message to all connected clients.
+  // Let the group know about the new message.
   broadcastMessageToGroup(wss, req.socket.groupInfo.groupId, outgoingMessage);
 }

@@ -2,7 +2,7 @@ import { serializeMessage } from '../core/serialize.js';
 import { SERVER_MESSAGE_TYPE } from '../core/message-types.js';
 import { broadcastMessageToGroup } from '../core/broadcast.js';
 
-export async function handleNewUserJoined(socket, { wss }) {
+export async function handleUserJoined(socket, { wss }) {
   // Record the message's timestamp.
   const currentTime = new Date().toISOString();
   // Create a user joined message object.
