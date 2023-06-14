@@ -14,5 +14,5 @@ export async function handleNewUserJoined(socket, { wss }) {
   // Serialize the message.
   const messageData = serializeMessage(SERVER_MESSAGE_TYPE.USER_JOINED, userJoinedMessage);
   // Send the message to all members in group.
-  broadcastMessageToGroup(wss, socket.groupId, messageData);
+  broadcastMessageToGroup(wss, socket.groupInfo.groupId, messageData);
 }

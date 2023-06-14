@@ -5,6 +5,7 @@ import { createDummyUserAuthService, createUserAuthService } from './lib/service
 import { initWsApi } from './ws/api-ws.js';
 import { initRestApi } from './rest/api-rest.js';
 import { createGroupModel } from './lib/models/group.model.js';
+import { createMarkerModel } from './lib/models/marker.model.js';
 
 const WS_PORT = 8080;
 const REST_PORT = 4000;
@@ -22,6 +23,7 @@ async function main() {
   // Create the data models.
   const chatMessageModel = createChatMessageModel(client);
   const groupModel = createGroupModel(client);
+  const markerModel = createMarkerModel(client);
   // Create the user auth service.
   let userAuthService;
   if (TEST_MODE) {
@@ -30,7 +32,7 @@ async function main() {
     userAuthService = createUserAuthService(config);
   }
 
-  initWsApi(WS_PORT, { chatMessageModel, groupModel, userAuthService });
+  initWsApi(WS_PORT, { userAuthService, groupModel, chatMessageModel, markerModel });
   initRestApi(REST_PORT, { groupModel, userAuthService });
 }
 

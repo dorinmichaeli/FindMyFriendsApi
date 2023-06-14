@@ -14,5 +14,5 @@ export function handleUserLeft(socket, { wss }) {
   // Serialize the message.
   const messageData = serializeMessage(SERVER_MESSAGE_TYPE.USER_LEFT, userLeftMessage);
   // Send the message to all connected clients.
-  broadcastMessageToGroup(wss, socket.groupId, messageData);
+  broadcastMessageToGroup(wss, socket.groupInfo.groupId, messageData);
 }

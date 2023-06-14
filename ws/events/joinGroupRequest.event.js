@@ -6,7 +6,7 @@ const HISTORY_MESSAGE_LIMIT = 5;
 
 export async function handleClientWelcome(socket, { chatMessageModel }) {
   // Get the chat history.
-  const chatHistory = await getChatMessageHistory(chatMessageModel, HISTORY_MESSAGE_LIMIT);
+  const chatHistory = await getChatMessageHistory(socket.groupInfo.groupId, HISTORY_MESSAGE_LIMIT, { chatMessageModel });
 
   // Create a welcome message object that lets the client get up to speed.
   const messageData = serializeMessage(SERVER_MESSAGE_TYPE.WELCOME, {

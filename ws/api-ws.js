@@ -8,7 +8,7 @@ import { handleNewUserJoined } from './events/newUserJoined.event.js';
 import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.js';
 import { validateInitialConnection } from './core/validate-connection.js';
 
-export function initWsApi(port, { chatMessageModel, groupModel, userAuthService }) {
+export function initWsApi(port, { userAuthService, groupModel, chatMessageModel, markerModel }) {
   const wss = new WebSocketServer({
     port,
   });
