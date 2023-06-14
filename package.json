@@ -1,5 +1,6 @@
 {
 	"private": true,
+	"name": "map-lord-api",
 	"type": "module",
 	"scripts": {
 		"start": "node index.js"
