@@ -15,6 +15,11 @@ export async function handleClientWelcome(socket, { chatMessageModel, markerMode
     listAllMarkers(groupId, { markerModel }),
   ]);
 
+  markerList.forEach(marker => {
+    // Map the "_id" field to "id".
+    marker._doc.id = marker._id;
+  });
+
   // Create a welcome message object that lets the client get up to speed.
   const messageData = serializeMessage(SERVER_MESSAGE_TYPE.WELCOME, {
     // Send the group id back to the user for convenience.
