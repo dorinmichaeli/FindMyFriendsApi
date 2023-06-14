@@ -56,7 +56,7 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
     socket.groupInfo = groupInfo;
 
     // Send a welcome message to the client with some info.
-    await handleClientWelcome(socket, { chatMessageModel, markerModel });
+    await handleClientWelcome(socket, { wss,chatMessageModel, markerModel });
     // Let all the clients know that a new client has joined.
     await handleUserJoined(socket, { wss });
   }
