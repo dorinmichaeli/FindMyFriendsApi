@@ -45,7 +45,8 @@ export function initWsApi(port, { chatMessageModel, groupModel, userAuthService 
   });
 
   async function prepareNewConnection(socket, incomingRequest) {
-    const { userInfo, groupInfo } = await validateInitialConnection(socket, incomingRequest, { userAuthService, groupModel });
+    const { userInfo, groupInfo }
+      = await validateInitialConnection(socket, incomingRequest, { userAuthService, groupModel });
 
     // Put the user info on the socket object.
     socket.userInfo = userInfo;
@@ -53,9 +54,9 @@ export function initWsApi(port, { chatMessageModel, groupModel, userAuthService 
     socket.groupInfo = groupInfo;
 
     // Send a welcome message to the client with some info.
-    await handleClientWelcome(socket);
+    await handleClientWelcome(socket, { chatMessageModel });
     // Let all the clients know that a new client has joined.
-    await handleNewUserJoined(socket, { chatMessageModel, wss });
+    await handleNewUserJoined(socket, { wss });
   }
 
   async function handleClientMessage(socket, messageBuffer) {
