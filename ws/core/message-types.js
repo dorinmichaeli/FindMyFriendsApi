@@ -5,9 +5,11 @@ export const SERVER_MESSAGE_TYPE = {
   USER_JOINED: 'D',
   USER_LEFT: 'E',
   MARKER_CREATED: 'F',
+  MARKER_DELETED: 'G',
 };
 
 export const CLIENT_MESSAGE_TYPE = {
   ADD_CHAT_MESSAGE: 'z',
   ADD_MARKER: 'y',
+  DELETE_MARKER: 'x',
 };

@@ -8,6 +8,7 @@ import { handleClientWelcome } from './events/clientWelcome.event.js';
 import { handleAddChatMessage } from './events/addChatMessage.event.js';
 import { validateInitialConnection } from './core/validate-connection.js';
 import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.js';
+import { handleDeleteMarker } from './events/deleteMarker.event.js';
 
 export function initWsApi(port, { userAuthService, groupModel, chatMessageModel, markerModel }) {
   const wss = new WebSocketServer({
@@ -77,6 +78,9 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
         break;
       case CLIENT_MESSAGE_TYPE.ADD_MARKER:
         await handleAddMarker(req, { wss, markerModel });
+        break;
+      case CLIENT_MESSAGE_TYPE.DELETE_MARKER:
+        await handleDeleteMarker(req, { wss, markerModel });
         break;
       default:
         throw new Error('Unknown message type: ' + messageType);
