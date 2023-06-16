@@ -3,9 +3,12 @@ import { notFound404 } from './handlers/404-not-found.handler.js';
 import { internalError500 } from './handlers/500-internal-error.handler.js';
 import { createGroupHandlerFactory } from './handlers/create-group.handler.js';
 import { userAuthMiddlewareFactory } from './middleware/userAuth.middleware.js';
+import {healthcheckHandler} from './handlers/healcheck.handler.js';
 
 export function initRestApi(port, { groupModel, userAuthService }) {
   const app = express();
+  app.disable('x-powered-by');
+  app.get('/healthcheck', healthcheckHandler);
 
   app.use(userAuthMiddlewareFactory({ userAuthService }));
   app.use(express.json());
