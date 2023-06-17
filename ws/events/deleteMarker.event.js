@@ -1,4 +1,4 @@
-import { deleteMarker } from '../../lib/controller/marker.controller.js';
+import { deleteMarker } from '../../shared/controller/marker.controller.js';
 import { SERVER_MESSAGE_TYPE } from '../core/message-types.js';
 import { serializeMessage } from '../core/serialize.js';
 import { broadcastMessageToGroup } from '../core/broadcast.js';

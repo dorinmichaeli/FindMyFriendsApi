@@ -1,7 +1,7 @@
-import {listAllMarkers} from '../../lib/controller/marker.controller.js';
+import {listAllMarkers} from '../../shared/controller/marker.controller.js';
 import {serializeMessage} from '../core/serialize.js';
 import {SERVER_MESSAGE_TYPE} from '../core/message-types.js';
-import {getChatMessageHistory} from '../../lib/controller/chatMessage.controller.js';
+import {getChatMessageHistory} from '../../shared/controller/chatMessage.controller.js';
 
 const HISTORY_MESSAGE_LIMIT = 5;
 

@@ -1,11 +1,11 @@
-import { connectToMongo } from './lib/tools/connect-mongo.js';
-import { loadAppConfig } from './lib/tools/config-loader.js';
-import { createChatMessageModel } from './lib/models/chatMessage.model.js';
-import { createUserAuthService } from './lib/services/userAuth.service.js';
+import { connectToMongo } from './shared/tools/connect-mongo.js';
+import { loadAppConfig } from './shared/tools/config-loader.js';
+import { createChatMessageModel } from './shared/models/chatMessage.model.js';
+import { createUserAuthService } from './shared/services/userAuth.service.js';
 import { initWsApi } from './ws/api-ws.js';
 import { initRestApi } from './rest/api-rest.js';
-import { createGroupModel } from './lib/models/group.model.js';
-import { createMarkerModel } from './lib/models/marker.model.js';
+import { createGroupModel } from './shared/models/group.model.js';
+import { createMarkerModel } from './shared/models/marker.model.js';
 
 const WS_PORT = 8080;
 const REST_PORT = 4000;

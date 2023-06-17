@@ -1,6 +1,6 @@
 import url from 'node:url';
 import querystring from 'node:querystring';
-import { findGroupById } from '../../lib/controller/group.controller.js';
+import { findGroupById } from '../../shared/controller/group.controller.js';
 
 export async function validateInitialConnection(socket, incomingRequest, { userAuthService, groupModel }) {
   // Parse the required query parameters from the URL.

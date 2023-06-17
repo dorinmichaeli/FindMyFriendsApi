@@ -1,4 +1,4 @@
-import { addChatMessage } from '../../lib/controller/chatMessage.controller.js';
+import { addChatMessage } from '../../shared/controller/chatMessage.controller.js';
 import { serializeMessage } from '../core/serialize.js';
 import { SERVER_MESSAGE_TYPE } from '../core/message-types.js';
 import { broadcastMessageToGroup } from '../core/broadcast.js';

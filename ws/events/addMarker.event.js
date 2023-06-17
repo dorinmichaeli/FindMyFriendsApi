@@ -1,4 +1,4 @@
-import { createMarker } from '../../lib/controller/marker.controller.js';
+import { createMarker } from '../../shared/controller/marker.controller.js';
 import { serializeMessage } from '../core/serialize.js';
 import { SERVER_MESSAGE_TYPE } from '../core/message-types.js';
 import { broadcastMessageToGroup } from '../core/broadcast.js';
