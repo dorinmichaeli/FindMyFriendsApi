@@ -3,11 +3,8 @@ import { SERVER_MESSAGE_TYPE } from '../core/message-types.js';
 import { broadcastMessageToGroup } from '../core/broadcast.js';
 
 export function handleUserLeft(socket, { wss }) {
-  // Record the message's timestamp.
-  const currentTime = new Date().toISOString();
   // Create a user left message object.
   const userLeftMessage = {
-    timestamp: currentTime,
     userName: socket.userInfo.email,
   };
 
