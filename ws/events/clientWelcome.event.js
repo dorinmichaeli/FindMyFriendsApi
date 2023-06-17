@@ -5,17 +5,17 @@ import {getChatMessageHistory} from '../../lib/controller/chatMessage.controller
 
 const HISTORY_MESSAGE_LIMIT = 5;
 
-export async function handleClientWelcome(socket, { wss, chatMessageModel, markerModel }) {
+export async function handleClientWelcome(socket, {wss, chatMessageModel, markerModel}) {
   const groupId = socket.groupInfo.groupId;
 
   // Get the users in this group.
-  const usersInGroup = getUsersInGroup(groupId, { wss });
+  const usersInGroup = getUsersInGroup(groupId, {wss});
 
   const [chatHistory, markerList] = await Promise.all([
     // Get some of the latest messages from the chat history.
-    getChatMessageHistory(groupId, HISTORY_MESSAGE_LIMIT, { chatMessageModel }),
+    getChatMessageHistory(groupId, HISTORY_MESSAGE_LIMIT, {chatMessageModel}),
     // Get the list of markers currently placed.
-    listAllMarkers(groupId, { markerModel }),
+    listAllMarkers(groupId, {markerModel}),
   ]);
 
   markerList.forEach(marker => {
@@ -40,11 +40,13 @@ export async function handleClientWelcome(socket, { wss, chatMessageModel, marke
   socket.send(messageData);
 }
 
-function getUsersInGroup(groupId, { wss }) {
+function getUsersInGroup(groupId, {wss}) {
   const users = [];
   for (const client of wss.clients) {
     if (client.groupInfo.groupId === groupId) {
-      users.push(client.userInfo.email);
+      users.push({
+        userName: client.userInfo.email,
+      });
     }
   }
   return users;
