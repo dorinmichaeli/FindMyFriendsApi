@@ -1,16 +1,16 @@
-import { WebSocketServer } from 'ws';
-import { parseMessage } from './core/parse-message.js';
-import { handleUserLeft } from './events/userLeft.event.js';
-import { handleAddMarker } from './events/addMarker.event.js';
-import { serializeMessage } from './core/serialize.js';
-import { handleUserJoined } from './events/userJoined.event.js';
-import { handleClientWelcome } from './events/clientWelcome.event.js';
-import { handleAddChatMessage } from './events/addChatMessage.event.js';
-import { validateInitialConnection } from './core/validate-connection.js';
-import { CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE } from './core/message-types.js';
-import { handleDeleteMarker } from './events/deleteMarker.event.js';
+import {WebSocketServer} from 'ws';
+import {parseMessage} from './core/parse-message.js';
+import {handleUserLeft} from './events/userLeft.event.js';
+import {handleAddMarker} from './events/addMarker.event.js';
+import {serializeMessage} from './core/serialize.js';
+import {handleUserJoined} from './events/userJoined.event.js';
+import {handleClientWelcome} from './events/clientWelcome.event.js';
+import {handleAddChatMessage} from './events/addChatMessage.event.js';
+import {validateInitialConnection} from './core/validate-connection.js';
+import {CLIENT_MESSAGE_TYPE, SERVER_MESSAGE_TYPE} from './core/message-types.js';
+import {handleDeleteMarker} from './events/deleteMarker.event.js';
 
-export function initWsApi(port, { userAuthService, groupModel, chatMessageModel, markerModel }) {
+export function initWsApi(port, {userAuthService, groupModel, chatMessageModel, markerModel}) {
   const wss = new WebSocketServer({
     port,
   });
@@ -20,6 +20,10 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
   });
 
   wss.on('connection', async function (socket, incomingRequest) {
+    // TODO: Instead of authenticating the user only once at the beginning, we
+    //  should authenticate the user either on every message or at least
+    //  do so periodically.
+
     try {
       await prepareNewConnection(socket, incomingRequest);
     } catch (error) {
@@ -42,13 +46,13 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
 
     socket.on('close', () => {
       // Let the clients know that a client has left.
-      handleUserLeft(socket, { wss });
+      handleUserLeft(socket, {wss});
     });
   });
 
   async function prepareNewConnection(socket, incomingRequest) {
-    const { userInfo, groupInfo }
-      = await validateInitialConnection(socket, incomingRequest, { userAuthService, groupModel });
+    const {userInfo, groupInfo}
+      = await validateInitialConnection(socket, incomingRequest, {userAuthService, groupModel});
 
     // Put the user info on the socket object.
     socket.userInfo = userInfo;
@@ -56,14 +60,14 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
     socket.groupInfo = groupInfo;
 
     // Send a welcome message to the client with some info.
-    await handleClientWelcome(socket, { wss,chatMessageModel, markerModel });
+    await handleClientWelcome(socket, {wss, chatMessageModel, markerModel});
     // Let all the clients know that a new client has joined.
-    await handleUserJoined(socket, { wss });
+    await handleUserJoined(socket, {wss});
   }
 
   async function handleClientMessage(socket, messageBuffer) {
     // 1. Parse the message.
-    const { messageType, data } = parseMessage(messageBuffer);
+    const {messageType, data} = parseMessage(messageBuffer);
 
     // 2. Construct the request object.
     const req = {
@@ -74,13 +78,13 @@ export function initWsApi(port, { userAuthService, groupModel, chatMessageModel,
     // 3. Handle the message.
     switch (messageType) {
       case CLIENT_MESSAGE_TYPE.ADD_CHAT_MESSAGE:
-        await handleAddChatMessage(req, { wss, chatMessageModel });
+        await handleAddChatMessage(req, {wss, chatMessageModel});
         break;
       case CLIENT_MESSAGE_TYPE.ADD_MARKER:
-        await handleAddMarker(req, { wss, markerModel });
+        await handleAddMarker(req, {wss, markerModel});
         break;
       case CLIENT_MESSAGE_TYPE.DELETE_MARKER:
-        await handleDeleteMarker(req, { wss, markerModel });
+        await handleDeleteMarker(req, {wss, markerModel});
         break;
       default:
         throw new Error('Unknown message type: ' + messageType);
