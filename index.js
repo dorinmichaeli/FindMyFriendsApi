@@ -6,6 +6,7 @@ import { initWsApi } from './ws/api-ws.js';
 import { initRestApi } from './rest/api-rest.js';
 import { createGroupModel } from './shared/models/group.model.js';
 import { createMarkerModel } from './shared/models/marker.model.js';
+import { createEventModel } from './shared/models/event.model.js';
 
 const WS_PORT = 8080;
 const REST_PORT = 4000;
@@ -24,10 +25,11 @@ async function main() {
   const chatMessageModel = createChatMessageModel(client);
   const groupModel = createGroupModel(client);
   const markerModel = createMarkerModel(client);
+  const eventModel = createEventModel(client);
   // Create the user auth service.
   const userAuthService = createUserAuthService(config, TEST_MODE);
 
-  initWsApi(WS_PORT, { userAuthService, groupModel, chatMessageModel, markerModel });
-  initRestApi(REST_PORT, { groupModel, userAuthService });
+  initWsApi(WS_PORT, {userAuthService, groupModel, chatMessageModel, markerModel});
+  initRestApi(REST_PORT, {userAuthService, groupModel, eventModel, markerModel});
 }
 
