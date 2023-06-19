@@ -1,7 +1,7 @@
 import { createGroup } from '../../shared/controller/group.controller.js';
 import { asyncHandler } from '../../shared/tools/async-handler.js';
 
-const GROUP_NAME_REGEX = /^[a-zA-Z0-9 !'"]{4,32}$/;
+const GROUP_NAME_REGEX = /^[a-zA-Z0-9 ,!'"]{4,32}$/;
 
 export function createGroupHandlerFactory({ groupModel }) {
   return asyncHandler(async (req, res) => {
@@ -9,7 +9,7 @@ export function createGroupHandlerFactory({ groupModel }) {
 
     // Validate the group name.
     if (!GROUP_NAME_REGEX.test(groupName)) {
-      res.status(404).end(`Invalid group name: ${groupName}`);
+      res.status(400).end(`Invalid group name: ${groupName}`);
       return;
     }
 
@@ -21,7 +21,7 @@ export function createGroupHandlerFactory({ groupModel }) {
     // Send the group id back to the client.
     res.json({
       groupId,
-      groupName,
+      groupName, // Also send the name back for convenience.
     });
   });
 }
