@@ -7,7 +7,7 @@ import { healthcheckHandler } from './handlers/healcheck.handler.js';
 import { checkGroupExistsHandlersFactory } from './handlers/check-group-exists.handlers.js';
 import { createEventHandlerFactory } from './handlers/create-event.handler.js';
 
-export function initRestApi(port, { userAuthService, groupModel, eventModel }) {
+export function initRestApi(port, { userAuthService, groupModel, eventModel, markerModel }) {
   const app = express();
   app.disable('x-powered-by');
   app.get('/healthcheck', healthcheckHandler);
@@ -15,7 +15,7 @@ export function initRestApi(port, { userAuthService, groupModel, eventModel }) {
   app.use(userAuthMiddlewareFactory({ userAuthService }));
   app.use(express.json());
 
-  app.post('/group/create', createGroupHandlerFactory({ groupModel }));
+  app.post('/group/create', createGroupHandlerFactory({ groupModel, eventModel, markerModel }));
   app.get('/group/exists', checkGroupExistsHandlersFactory({ groupModel }));
   app.post('/event/create', createEventHandlerFactory({ eventModel }));
   app.use(notFound404);

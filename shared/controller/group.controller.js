@@ -1,10 +1,9 @@
-import { nanoid } from 'nanoid';
-
-export async function createGroup(groupModel, groupName) {
+export async function createGroup(groupModel, groupId, eventId, groupName) {
   return await groupModel
     .create({
-      groupId: nanoid(12),
+      groupId: groupId,
       groupName: groupName,
+      eventId: eventId,
     });
 }
 

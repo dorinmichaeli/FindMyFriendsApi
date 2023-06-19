@@ -1,11 +1,13 @@
 import { createGroup } from '../../shared/controller/group.controller.js';
 import { asyncHandler } from '../../shared/tools/async-handler.js';
+import { findEventById } from '../../shared/controller/event.controller.js';
+import { nanoid } from 'nanoid';
 
 const GROUP_NAME_REGEX = /^[a-zA-Z0-9 ,!'"]{4,32}$/;
 
-export function createGroupHandlerFactory({ groupModel }) {
+export function createGroupHandlerFactory({ groupModel, eventModel, markerModel }) {
   return asyncHandler(async (req, res) => {
-    const { groupName } = req.body;
+    const { groupName, eventId } = req.body;
 
     // Validate the group name.
     if (!GROUP_NAME_REGEX.test(groupName)) {
@@ -13,10 +15,35 @@ export function createGroupHandlerFactory({ groupModel }) {
       return;
     }
 
+    // Generate a unique group id.
+    const groupId = nanoid(12);
+
+    // Note: [eventId] is optional.
+    if (eventId) {
+      // Event id is provided, use that event's markers.
+
+      // Get the event info.
+      const event = await findEventById(eventModel, eventId);
+      // Make sure such an event exists.
+      if (!event) {
+        res.status(400).end(`Cannot create group, as the referenced event id was not found: ${eventId}`);
+        return;
+      }
+
+      // Generate markers for this group, for each of the event marker locations.
+      for (const markerLocation of event.markerLocations) {
+        await markerModel.create({
+          groupId: groupId,
+          owner: 'event admin',
+          lat: markerLocation.lat,
+          lon: markerLocation.lon,
+        });
+      }
+    }
+
     // Create a new group.
-    const groupCreationResult = await createGroup(groupModel, groupName);
-    // When creating a new group we get back the group's unique id.
-    const groupId = groupCreationResult._doc.groupId;
+    await createGroup(groupModel, groupId, eventId, groupName);
+    // TODO: Check if creating the group failed.
 
     // Send the group id back to the client.
     res.json({

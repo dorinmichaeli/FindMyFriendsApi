@@ -8,3 +8,10 @@ export async function createEvent(eventModel, eventName, markerLocations) {
       markerLocations: markerLocations,
     });
 }
+
+export async function findEventById(eventModel, eventId) {
+  return await eventModel
+    .findOne({
+      eventId: eventId,
+    });
+}
