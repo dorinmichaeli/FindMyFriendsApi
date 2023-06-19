@@ -20,8 +20,8 @@ export function createGroupHandlerFactory({ groupModel }) {
 
     // Send the group id back to the client.
     res.json({
-      groupName,
       groupId,
+      groupName,
     });
   });
 }
