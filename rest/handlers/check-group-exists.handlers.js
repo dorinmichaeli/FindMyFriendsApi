@@ -3,7 +3,7 @@ import {findGroupById} from '../../shared/controller/group.controller.js';
 
 export function checkGroupExistsHandlersFactory({groupModel}) {
   return asyncHandler(async (req, res) => {
-    const {groupId} = req.body;
+    const {groupId} = req.query;
 
     // Check that group id was provided.
     if (!groupId) {

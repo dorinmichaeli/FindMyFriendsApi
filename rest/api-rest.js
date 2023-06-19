@@ -15,7 +15,7 @@ export function initRestApi(port, { groupModel, userAuthService }) {
   app.use(express.json());
 
   app.post('/group/create', createGroupHandlerFactory({ groupModel }));
-  app.post('/group/exists', checkGroupExistsHandlersFactory({ groupModel }));
+  app.get('/group/exists', checkGroupExistsHandlersFactory({ groupModel }));
   app.use(notFound404);
   app.use(internalError500);
 
