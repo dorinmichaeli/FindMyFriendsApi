@@ -3,10 +3,11 @@ export async function listAllMarkers(groupId, { markerModel }) {
     .find({ groupId });
 }
 
-export async function createMarker({ groupId, owner, lat, lon }, { markerModel }) {
+export async function createMarker({ groupId, owner, title, lat, lon }, { markerModel }) {
   return await markerModel.create({
     groupId,
     owner,
+    title,
     lat,
     lon,
   });

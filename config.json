@@ -4,7 +4,7 @@
 		"port": 27017,
 		"username": "mongo_admin",
 		"password": "987876",
-		"database": "wstest"
+		"database": "findmyfriends"
 	},
 	"firebase": {
 		"apiKey": "AIzaSyBBJR9e7SvJBB6Ugb0W-IQWPmMWsobpZZc",

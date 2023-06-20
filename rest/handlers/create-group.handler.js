@@ -3,7 +3,7 @@ import { asyncHandler } from '../../shared/tools/async-handler.js';
 import { findEventById } from '../../shared/controller/event.controller.js';
 import { nanoid } from 'nanoid';
 
-const GROUP_NAME_REGEX = /^[a-zA-Z0-9 ,!'"]{4,32}$/;
+const GROUP_NAME_REGEX = /^[a-zA-Z0-9 ,!'"]{3,32}$/;
 
 export function createGroupHandlerFactory({ groupModel, eventModel, markerModel }) {
   return asyncHandler(async (req, res) => {
@@ -34,7 +34,8 @@ export function createGroupHandlerFactory({ groupModel, eventModel, markerModel 
       for (const markerLocation of event.markerLocations) {
         await markerModel.create({
           groupId: groupId,
-          owner: 'event admin',
+          owner: 'admin',
+          title: markerLocation.title,
           lat: markerLocation.lat,
           lon: markerLocation.lon,
         });

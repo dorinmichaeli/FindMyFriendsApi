@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 const eventMarkerLocationSchema = new mongoose.Schema({
+  title: {type: String, required: true},
   lat: {type: Number, required: true},
   lon: {type: Number, required: true},
 });

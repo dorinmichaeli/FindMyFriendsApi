@@ -1,7 +1,7 @@
 import { asyncHandler } from '../../shared/tools/async-handler.js';
 import { createEvent } from '../../shared/controller/event.controller.js';
 
-const EVENT_NAME_REGEX = /^[a-zA-Z0-9 ,!'"]{4,24}$/;
+const EVENT_NAME_REGEX = /^[a-zA-Z0-9 ,!'"]{3,32}$/;
 
 export function createEventHandlerFactory({eventModel}) {
   return asyncHandler(async (req, res) => {
