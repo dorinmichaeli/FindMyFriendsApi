@@ -1,6 +1,6 @@
 {
 	"private": true,
-	"name": "maplord-api",
+	"name": "findmyfriends-api",
 	"type": "module",
 	"scripts": {
 		"start": "node index.js"

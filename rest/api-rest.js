@@ -23,7 +23,7 @@ export function initRestApi(port, { userAuthService, groupModel, eventModel, mar
 
   const server = app.listen(port, () => {
     const { port } = server.address();
-    console.log(`MapLord REST API listening on port ${port}.`);
+    console.log(`FindMyFriends REST API listening on port ${port}.`);
   });
 }
 
