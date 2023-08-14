@@ -20,10 +20,6 @@ export function initWsApi(port, {userAuthService, groupModel, chatMessageModel, 
   });
 
   wss.on('connection', async function (socket, incomingRequest) {
-    // TODO: Instead of authenticating the user only once at the beginning, we
-    //  should authenticate the user either on every message or at least
-    //  do so periodically.
-
     try {
       await prepareNewConnection(socket, incomingRequest);
     } catch (error) {
